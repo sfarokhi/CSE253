@@ -63,7 +63,7 @@ scrape_subreddits(ideological_subreddits, "Ideological Politics")
 
 df = pd.DataFrame(data)
 
-df.to_csv('C:/Users/jperr/Documents/CSE253/proj_code/political_posts_analysis.csv', index=False)
+df.to_csv('reddit_political_posts_analysis.csv', index=False)
 print("Data collection completed. Check csv for info.")
 
 
