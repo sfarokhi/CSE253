@@ -8,13 +8,14 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # Important
-username = ""
-password = ""
+username = "UCSCResearch"
+password = "wasd123!!!"
 phone_number = ""
 
 # Set up Selenium WebDriver (Chrome in this case)
 chrome_options = Options()
 # chrome_options.add_argument("--headless")  # Run in headless mode, comment this out if you want to see the browser
+chrome_options.binary_location = "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"    
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
 
@@ -50,9 +51,13 @@ wait = WebDriverWait(driver, 10)  # Wait up to 10 seconds
 #     for word in search_words:
 #         if word in page_text:
 #             # Enter phone number
-phone_number_input = wait.until(EC.presence_of_element_located((By.TAG_NAME, "input")))
-phone_number_input.send_keys(phone_number)
-phone_number_input.send_keys(Keys.RETURN)
+
+# INCLUDE LATER
+# phone_number_input = wait.until(EC.presence_of_element_located((By.TAG_NAME, "input")))
+# phone_number_input.send_keys(phone_number)
+# phone_number_input.send_keys(Keys.RETURN)
+
+
 #             break
 # except:
 #     pass
