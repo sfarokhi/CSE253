@@ -1,0 +1,12 @@
+{
+    "username" : "samslug1223",
+    "password" : "salamander1223!",
+    "max-tweets": 5,
+    "advanced-search": {
+        "allOfTheseWords": "Kamala",
+        "thisExactPhrase": "",
+        "anyOfTheseWords": "",
+        "noneOfTheseWords": "",
+        "theseHashtags": "#Kamala"
+    }
+}
