@@ -3,27 +3,14 @@
     "password" : "salamander1223!",
     "test-parameters": [{
         "test-id": "1",
-        "max-tweets": 20,
+        "max-tweets": 100,
         "advanced-search": {
-            "allOfTheseWords": "Kamala",
+            "allOfTheseWords": "",
             "thisExactPhrase": "",
             "anyOfTheseWords": "",
-            "noneOfTheseWords": "Trump",
-            "theseHashtags": "#Kamala",
-            "fromTheseAccounts": "",
-            "toTheseAccounts": ""
-        }
-    },
-    {
-        "test-id": "2",
-        "max-tweets": 20,
-        "advanced-search": {
-            "allOfTheseWords": "Trump",
-            "thisExactPhrase": "",
-            "anyOfTheseWords": "",
-            "noneOfTheseWords": "Kamala",
-            "theseHashtags": "#Trump",
-            "fromTheseAccounts": "",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump",
             "toTheseAccounts": ""
         }
     }]

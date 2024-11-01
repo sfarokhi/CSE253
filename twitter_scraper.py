@@ -66,6 +66,7 @@ if __name__ == '__main__':
     driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
     driver.get("https://x.com/i/flow/login")
 
+    driver.implicitly_wait(0.5)
     wait = WebDriverWait(driver, 10)
 
     username_input = wait.until(EC.presence_of_element_located((By.NAME, "text")))
@@ -95,6 +96,7 @@ if __name__ == '__main__':
         tweets = []
         last_height = driver.execute_script("return document.body.scrollHeight")
         new_height = last_height
+        duplicate_tweet_counter = 0
 
         flag = True
 
@@ -162,29 +164,38 @@ if __name__ == '__main__':
                     except Exception as e:
                         print("Error")
 
-                    # Click "Show more" if the button is present to expand the tweet text
-                    try:
-                        show_more_button = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweet-text-show-more-link']")
-                        show_more_button.click()
-                        tweet_expanded = True
-                    except:
-                        print("No extra text")
+                    # # Click "Show more" if the button is present to expand the tweet text
+                    # try:
+                    #     show_more_button = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweet-text-show-more-link']")
+                    #     show_more_button.click()
+                    #     tweet_expanded = True
+                    #     time.sleep(5)
+                    # except:
+                    #     print("No extra text")
 
                     tweet_data['text'] = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
                     
-                    # If "Show more" was clicked, go back to the main tweet view
-                    if tweet_expanded:
-                        go_back = tweet.find_element(By.CSS_SELECTOR, "[data-testid='app-bar-back']")
-                        go_back.click()
-                        tweet_expanded = False
+                    # # If "Show more" was clicked, go back to the main tweet view
+                    # if tweet_expanded:
+                    #     driver.back()
+                    #     tweet_expanded = False
+                    #     time.sleep(5)
                     
                     # Check for duplicate tweets before adding to the list
                     if tweet_data not in tweets:
                         print("Added tweet")
                         tweets.append(tweet_data)
+                        duplicate_tweet_counter = 0
                     else:
                         print("Duplicate tweet")
+                        duplicate_tweet_counter += 1
 
+                        if duplicate_tweet_counter > 5:
+                            print("Ran out of Tweets")
+                            compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
+                            flag = False
+                            break
+                            
                     print("-" * 20)
 
                     if len(tweets) >= max_tweets:
@@ -198,16 +209,10 @@ if __name__ == '__main__':
                     continue
 
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(1)
+            time.sleep(3)
             new_height = driver.execute_script("return document.body.scrollHeight")
 
-            if new_height == last_height:
-                print("No more tweets to load.")
-                compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
-                flag = False
-                break
-
-            elif len(tweets) >= max_tweets:
+            if len(tweets) >= max_tweets:
                 print("Complete.")
                 compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
                 flag = False
