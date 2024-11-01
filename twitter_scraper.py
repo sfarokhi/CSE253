@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 import sys
@@ -40,17 +41,17 @@ class JSONObject:
     def __str__(self):
         return json.dumps(self.data, indent=4)
 
-def return_data(tweets):
-    for i, tweet in enumerate(tweets):
-        print(f"Tweet {i+1}:")
-        print(f"Author: {tweet['author']}")
-        print(f"Text: {tweet['text']}")
-        print(f"View Count: {tweet['view_count']}")
-        print(f"Timestamp: {tweet['timestamp']}")
-        print(f"Certified: {tweet['certified']}")
-        print(f"Likes: {tweet['likes']}")
-        print(f"Retweets: {tweet['retweets']}")
-        print("-" * 40)
+def compile_results(data, filename):
+    try:
+        # Ensure data is a list of dictionaries (JSON objects)
+        if isinstance(data, list) and all(isinstance(item, dict) for item in data):
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4, ensure_ascii=False)
+            print(f"Data successfully saved to {filename}")
+        else:
+            raise ValueError("Input data must be a list of dictionaries (JSON objects).")
+    except Exception as e:
+        print(f"Error saving data to JSON: {e}")
 
 if __name__ == '__main__':
     settings = JSONObject(sys.argv[1])
@@ -65,7 +66,6 @@ if __name__ == '__main__':
     driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
     driver.get("https://x.com/i/flow/login")
 
-    time.sleep(2)
     wait = WebDriverWait(driver, 10)
 
     username_input = wait.until(EC.presence_of_element_located((By.NAME, "text")))
@@ -75,88 +75,143 @@ if __name__ == '__main__':
     password_input = wait.until(EC.presence_of_element_located((By.NAME, "password")))
     password_input.send_keys(password)
     password_input.send_keys(Keys.RETURN)
-    time.sleep(5)
+    time.sleep(2)
 
-    driver.get("https://x.com/search-advanced?vertical=trends")
-    try:
-        for option, value in settings['advanced-search'].items():
-            if value:
-                foo = wait.until(EC.presence_of_element_located((By.NAME, option)))
-                foo.send_keys(value)
-        foo.send_keys(Keys.RETURN)
+    for parameters in settings['test-parameters']:
 
-    except Exception as e:
-        print(f"Error: {e}")
+        max_tweets = parameters['max-tweets']
+        driver.get("https://x.com/search-advanced?vertical=trends")
+        try:
+            for option, value in parameters['advanced-search'].items():
+                if value:
+                    foo = wait.until(EC.presence_of_element_located((By.NAME, option)))
+                    foo.send_keys(value)
+            foo.send_keys(Keys.RETURN)
 
-    time.sleep(5)
-    tweets = []
-    last_height = driver.execute_script("return document.body.scrollHeight")
+        except Exception as e:
+            print(f"Error: {e}")
 
-    # While extracting tweets
-    while len(tweets) < settings['max-tweets']:
-        
-        # Get current tweets on page
-        current_url = driver.current_url
-        tweet_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='tweet']")))
+        time.sleep(5)
+        tweets = []
+        last_height = driver.execute_script("return document.body.scrollHeight")
+        new_height = last_height
 
-        # For each tweet
-        for tweet in tweet_elements:
-            try:
-                tweet_expanded = False  # Track if "Show more" was clicked
-                
-                # Click "Show more" if the button is present to expand the tweet text
-                show_more_button = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweet-text-show-more-link']")
-                if show_more_button:
-                    show_more_button.click()
-                    tweet_expanded = True
+        flag = True
 
-                # Extract tweet information
-                tweet_text = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
-                view_count = tweet.find_element(By.CSS_SELECTOR, "[data-testid='viewCount']").text
-                timestamp = tweet.find_element(By.CSS_SELECTOR, "time").get_attribute("datetime")
-                certified = "Yes" if tweet.find_element(By.CSS_SELECTOR, "[data-testid='icon-verified']") else "No"
-                fact_checked = "Yes" if tweet.find_element(By.CSS_SELECTOR, "[data-testid='birdwatch-pivot']") else "No"
-                author = tweet.find_element(By.CSS_SELECTOR, "div[role='link'] span").text
-                
-                # Safely get likes and retweets, handling potential empty elements
-                likes_element = tweet.find_element(By.CSS_SELECTOR, "[data-testid='like']")
-                likes = likes_element.text if likes_element else "0"
-                
-                retweets_element = tweet.find_element(By.CSS_SELECTOR, "[data-testid='reply']")
-                retweets = retweets_element.text if retweets_element else "0"
-                
-                # Create a tweet dictionary to store the information
-                tweet_info = {
-                    "text": tweet_text,
-                    "view_count": view_count,
-                    "timestamp": timestamp,
-                    "certified": certified,
-                    "fact_checked": fact_checked,
-                    "author": author,
-                    "likes": likes,
-                    "retweets": retweets,
-                }
+        # While extracting tweets
+        while flag and len(tweets) < max_tweets:
+            
+            # Get current tweets on page
+            current_url = driver.current_url
+            tweet_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='tweet']")))
 
-                # Check for duplicate tweets before adding to the list
-                if tweet_info not in tweets:
-                    tweets.append(tweet_info)
-                
-                # If "Show more" was clicked, go back to the main tweet view
-                if tweet_expanded:
-                    go_back = tweet.find_elements(By.CSS_SELECTOR, "[data-testid='app-bar-back']")
-                    if go_back:
-                        go_back[0].click()
+            # For each tweet
+            for tweet in tweet_elements:
+                try:
+                    tweet_expanded = False  # Track if "Show more" was clicked
+                    tweet_data = {
+                        "username": "N/A",
+                        "icon-verified": False,
+                        "fact-checked": False,
+                        "text": "N/A",
+                        "timestamp": "N/A",
+                        "replies": 0,
+                        "reposts": 0,
+                        "likes": 0,
+                        "bookmarks": 0,
+                        "views": 0,
+                    }
+
+                    # Extract tweet information
+                    metadata = tweet.find_element(By.XPATH, './/div[@aria-label][@role="group"]').get_attribute('aria-label')
+                    try:
+                        for value in metadata.split(','):
+                            parts = value.strip().split(' ')
+                            if len(parts) >= 2:
+                                metadata_number = int(parts[0])
+                                metadata_type = parts[1]
+                                tweet_data[metadata_type] = metadata_number
+                    except Exception as e:
+                        print("Metadata parsing error")
+
+                    try:
+                        tweet_data['username'] = tweet.find_element(By.XPATH, './/a[contains(@href, "/") and @role="link"]').get_attribute("href").split('/')[-1]
+                    except Exception as e:
+                        print("Username doesn't exist???")
+
+                    try:
+                        tweet_data['timestamp'] = tweet.find_element(By.XPATH, './/time[@datetime]').get_attribute('datetime')
+                    except Exception as e:
+                        print("No timestamp")
+                    
+                    try:
+                        tweet.find_element(By.CSS_SELECTOR, '[data-testid="icon-verified"]')
+                        print("Verified")
+                        tweet_data['icon-verified'] = True
+                    except NoSuchElementException:
+                        print("Not verified")
+                    except Exception as e:
+                        print("Error")
+
+                    try:
+                        tweet.find_element(By.CSS_SELECTOR, '[data-testid="birdwatch-pivot"]')
+                        print("Fact Checked")
+                        tweet_data['fact-checked'] = True
+                    except NoSuchElementException:
+                        print("Not Fact Checked")
+                    except Exception as e:
+                        print("Error")
+
+                    # Click "Show more" if the button is present to expand the tweet text
+                    try:
+                        show_more_button = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweet-text-show-more-link']")
+                        show_more_button.click()
+                        tweet_expanded = True
+                    except:
+                        print("No extra text")
+
+                    tweet_data['text'] = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
+                    
+                    # If "Show more" was clicked, go back to the main tweet view
+                    if tweet_expanded:
+                        go_back = tweet.find_element(By.CSS_SELECTOR, "[data-testid='app-bar-back']")
+                        go_back.click()
                         tweet_expanded = False
+                    
+                    # Check for duplicate tweets before adding to the list
+                    if tweet_data not in tweets:
+                        print("Added tweet")
+                        tweets.append(tweet_data)
+                    else:
+                        print("Duplicate tweet")
 
-            except Exception as e:
-                print(f"Error in tweet extraction: {e}")
+                    print("-" * 20)
+
+                    if len(tweets) >= max_tweets:
+                        print("Max Tweets Reached")
+                        compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
+                        flag = False
+                        break
+
+                except Exception as e:
+                    print(f"There was an error {e}\n\n")
+                    continue
 
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(1)
             new_height = driver.execute_script("return document.body.scrollHeight")
+
             if new_height == last_height:
                 print("No more tweets to load.")
-                driver.quit()    
-                return_data(tweets)
-                exit(0)
-            last_height = new_height
+                compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
+                flag = False
+                break
+
+            elif len(tweets) >= max_tweets:
+                print("Complete.")
+                compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
+                flag = False
+                break
+
+            else:
+                last_height = new_height

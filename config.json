@@ -1,12 +1,30 @@
 {
     "username" : "samslug1223",
     "password" : "salamander1223!",
-    "max-tweets": 5,
-    "advanced-search": {
-        "allOfTheseWords": "Kamala",
-        "thisExactPhrase": "",
-        "anyOfTheseWords": "",
-        "noneOfTheseWords": "",
-        "theseHashtags": "#Kamala"
-    }
+    "test-parameters": [{
+        "test-id": "1",
+        "max-tweets": 20,
+        "advanced-search": {
+            "allOfTheseWords": "Kamala",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "Trump",
+            "theseHashtags": "#Kamala",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },
+    {
+        "test-id": "2",
+        "max-tweets": 20,
+        "advanced-search": {
+            "allOfTheseWords": "Trump",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "Kamala",
+            "theseHashtags": "#Trump",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    }]
 }
