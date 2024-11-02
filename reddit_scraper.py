@@ -15,8 +15,8 @@ political_subreddits = ['Wikileaks', 'News', 'PoliticalDiscussion','NeutralPolit
 
 # Joey - above list is more neutral based politics, below is a list of 
 #        subreddits that are more ideologically focused.
-ideological_subreddits = ['Democrat', 'Republican', 'Conservative', 'Libertarian', 'Anarchism', 'Socialism',
-                          'Progressive','Republicanism', 'Conservatives']
+ideological_subreddits = ['democrats', 'Republican', 'Conservative', 'Libertarian', 'Anarchism', 'Socialism',
+                          'Progressive','Republicanism', 'Conservatives', 'dailywire', 'Liberal', 'KamalaHarris', 'Impeach_Trump']
 
 data = []
 
@@ -41,19 +41,23 @@ def scrape_subreddits(subreddits, category):
 
                 fact_checking = "Yes" if detect_fact_checking(post) else "No"
                 
-                data.append({
-                    'Subreddit': sub_name,
-                    'Category': category,
-                    'Members': num_members,
-                    'Title': post.title,
-                    'Upvotes': post.score,
-                    'Comments': post.num_comments,
-                    'Moderator Interaction': mod_interaction,
-                    'Fact-Checking Mention': fact_checking,
-                    # Joey - Next Line is currently broken, working on solution but wanted to push some changes
-                    'Fact Check URL':'N/A' if fact_checking == "No" else post.url,
-                    'Original Post URL': post.permalink
-                })
+                keyword = "kamala" #Joey - keyword searching
+                if re.search(keyword, post.title + post.selftext, re.IGNORECASE):
+                    awards = post.total_awards_received
+                    data.append({
+                        'Keyword' : keyword,
+                        'Subreddit': sub_name,
+                        'Category': category,
+                        'Members': num_members,
+                        'Title': post.title,
+                        'Upvotes': post.score,
+                        'Comments': post.num_comments,
+                        'Moderator Interaction': mod_interaction,
+                        'Fact-Checking Mention': fact_checking,
+                        'Total Awards': awards,
+                        'URL': post.url,
+                        'Original Post URL': post.permalink
+                    })
 
         except Exception as e:
             print(f"Error accessing {sub_name}: {e}")
