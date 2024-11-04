@@ -1,0 +1,13 @@
+{
+    "credentials": {
+        "username": "research4065",
+        "password": "ucsc@UCSC.23"
+    },
+    "urls": {
+        "https://www.threads.net/search?q=kamla%20harris&serp_type=default": "kamla_harris",
+        "https://www.threads.net/search?q=donald%20trump&serp_type=default": "donald_trump",
+        "https://www.threads.net/search?q=election&serp_type=default": "election",
+        "https://www.threads.net/search?q=elections&serp_type=default": "election"
+
+    }
+}
