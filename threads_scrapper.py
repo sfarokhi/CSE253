@@ -1,107 +1,142 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support import expected_conditions as EC
-
-import sys
 import json
+import csv
 import time
+from datetime import datetime
+import jmespath
+from parsel import Selector
+from nested_lookup import nested_lookup
+from playwright.sync_api import sync_playwright
+from typing import Dict
+import random
 
-# Function to fetch post texts
-def fetch_posts(driver):
-    post_containers = driver.find_elements(By.XPATH, "//div[contains(@class, 'x1a6qonq')]")
-    post_texts = []
-    for i, post_container in enumerate(post_containers):
-        try:
-            post_text_elements = post_container.find_elements(By.XPATH, ".//span[contains(@class, 'x1lliihq')]")
-            post_text = " ".join([element.text for element in post_text_elements if element.text.strip()]).strip()
-            if post_text:
-                post_texts.append(post_text)
-                print(f"Post {i + 1}: {post_text}")
+def login_to_threads(page, username, password):
+    """Logs into Threads using provided credentials."""
+    page.goto("https://www.threads.net/login")
+    page.wait_for_selector('input[placeholder="Username, phone or email"]', timeout=10000)
+    page.fill('input[placeholder="Username, phone or email"]', username)
+    page.fill('input[placeholder="Password"]', password)
+    page.click('text="Log in"')
+    page.wait_for_load_state('networkidle')
+    if page.url == "https://www.threads.net/?login_success=true":
+        print("Login successful!")
+    else:
+        raise Exception("Login failed. Please check your credentials or the login process.")
+
+def parse_thread(data: Dict) -> Dict:
+    """Parse Threads JSON dataset for the most important fields."""
+    result = jmespath.search(
+        """{
+        text: post.caption.text,
+        published_on: post.taken_at,
+        id: post.id,
+        code: post.code,
+        username: post.user.username,
+        user_verified: post.user.is_verified,
+        user_id: post.user.id,
+        repost_count: post.text_post_app_info.repost_count,
+        reshare_count: post.text_post_app_info.reshare_count,
+        like_count: post.like_count,
+        comment_count: post.text_post_app_info.direct_reply_count
+    }""",
+        data,
+    )
+    if result:
+        result["url"] = f"https://www.threads.net/@{result['username']}/post/{result['code']}"
+    return result
+
+def read_existing_codes(csv_filename):
+    """Read existing post codes from the CSV file."""
+    existing_codes = set()
+    try:
+        with open(csv_filename, 'r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader, None)  # Skip header
+            for row in reader:
+                if row:
+                    existing_codes.add(row[0])  # Assuming 'code' is in the first column
+    except FileNotFoundError:
+        print(f"CSV file {csv_filename} not found. A new one will be created.")
+    return existing_codes
+
+def fetch_posts(page, extracted_post_codes):
+    """Fetches posts from the current page."""
+    page_content = page.content()
+    selector = Selector(page_content)
+    hidden_datasets = selector.css('script[type="application/json"][data-sjs]::text').getall()
+
+    if not hidden_datasets:
+        print("No embedded JSON data found on the page.")
+        return []
+
+    new_posts = []
+
+    for hidden_dataset in hidden_datasets:
+        if '"ScheduledServerJS"' not in hidden_dataset or "thread_items" not in hidden_dataset:
+            continue
+        data = json.loads(hidden_dataset)
+        thread_items = nested_lookup("thread_items", data)
+        if not thread_items:
+            continue
+
+        for thread in thread_items:
+            for t in thread:  # Iterate over all thread containers
+                parsed_post = parse_thread(t)
+                if parsed_post:
+                    post_code = parsed_post.get('code')
+                    if post_code and post_code not in extracted_post_codes:
+                        extracted_post_codes.add(post_code)
+                        new_posts.append(parsed_post)
+                        print(f"Found new post: {post_code}")
+
+    return new_posts
+
+def save_posts_to_csv(posts, csv_filename):
+    """Saves posts to CSV, only saving new posts."""
+    with open(csv_filename, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        if f.tell() == 0:
+            writer.writerow(["code", "like_count", "comment_count", "username", "user_verified", "repost_count", "reshare_count", "text", "timestamp", "post_url"])
+
+        for post in posts:
+            readable_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            writer.writerow([
+                post.get('code', ''), post.get('like_count', 0), post.get('comment_count', 0),
+                post.get('username', ''), post.get('user_verified', ''), post.get('repost_count', 0), post.get('reshare_count', 0),
+                post.get('text', ''), readable_date, post.get('url', '')
+            ])
+            print(f"Saved post: {post['code']}")
+
+# Main execution
+with sync_playwright() as pw:
+    chromium_path = "/Users/riyaaggarwal/Library/Caches/ms-playwright/chromium-1112/chrome-mac/Chromium.app/Contents/MacOS/Chromium"
+    browser = pw.chromium.launch(executable_path=chromium_path, headless=False)
+    context = browser.new_context(viewport={"width": 1920, "height": 1080})
+    page = context.new_page()
+
+    try:
+        # Load credentials and URL mapping from threads_config.json
+        with open("threads_config.json", 'r') as config_file:
+            config = json.load(config_file)
+        username = config["credentials"]["username"]
+        password = config["credentials"]["password"]
+        url_map = config["urls"]
+
+        login_to_threads(page, username, password)
+        time.sleep(3)
+        for url, name in url_map.items():
+            print(f"Processing URL: {url}")
+            page.goto(url)
+            delay = random.randint(30, 90)  # Delay between 30 to 90 seconds
+            print(f"Sleeping for {delay} seconds before processing the next URL...")
+            time.sleep(delay)
+            csv_filename = f"{name}.csv"
+            existing_post_codes = read_existing_codes(csv_filename)
+            print(f"Fetching up to 10 new posts for {name}...")
+            new_posts = fetch_posts(page, existing_post_codes)
+            if new_posts:
+                save_posts_to_csv(new_posts, csv_filename)
             else:
-                print(f"Post {i + 1}: No Post Text")
-            print('-' * 80)
-        except Exception as e:
-            print(f"An error occurred while processing post {i + 1}: {str(e)}")
-    return post_texts
+                print(f"No new posts found for {name}.")
 
-if __name__=='__main__':
-
-    # Set up the Chrome WebDriver
-    service = Service() # Service('/usr/local/bin/chromedriver')
-
-    chrome_options = Options()
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-
-    driver.implicitly_wait(0.5)
-    wait = WebDriverWait(driver, 10)    
-
-    # Start the timer
-    start_time = time.time()
-
-    # Open the login page
-    driver.get('https://www.threads.net/login')
-    
-    username = 'aggarwalriya48@gmail.com'
-    password = 'ucsc@UCSC.23'
-    searches = ["Kamala Harris", "Donald Trump"]
-    max_results = 10
-
-    username_input = wait.until(EC.presence_of_element_located((By.XPATH, './/input[@placeholder="Username, phone or email"]')))
-    username_input.send_keys(username)
-
-    password_input = wait.until(EC.presence_of_element_located((By.XPATH, './/input[@placeholder="Password"]')))
-    password_input.send_keys(password)
-    password_input.send_keys(Keys.RETURN)
-    time.sleep(5)
-
-    # Print the current URL for debugging
-    current_url = driver.current_url
-    print(f"Current URL after login attempt: {current_url}")
-
-    for search in searches:
-        # Go to the search bar
-        driver.get('https://www.threads.net/search')
-        search_tab = wait.until(EC.presence_of_element_located((By.XPATH, './/input[@placeholder="Search"]')))
-        search_tab.send_keys(search)
-        search_tab.send_keys(Keys.ENTER)
-
-        # Fetch initial posts before scrolling
-        fetch_posts(driver=driver)
-
-        # Scroll to load more posts
-        scroll_pause_time = 2  # Time to wait after each scroll
-        last_height = driver.execute_script("return document.body.scrollHeight")
-
-        num_results = 0
-        flag = True
-        
-        while flag and num_results < max_results:
-            # Check if 30 seconds have passed
-            if time.time() - start_time > 30:
-                print("Stopping the script after 30 seconds.")
-                flag = False
-                break
-            
-            # Fetch posts again after scrolling
-            results = fetch_posts(driver=driver)
-            num_results += len(results)
-            
-            # Wait to load the page
-            time.sleep(scroll_pause_time)
-            
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(3)
-            new_height = driver.execute_script("return document.body.scrollHeight")
-            
-            if new_height == last_height or num_results == max_results:
-                flag = False
-
-            last_height = new_height
+    finally:
+        browser.close()
