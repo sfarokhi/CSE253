@@ -69,7 +69,9 @@ scrape_subreddits(ideological_subreddits, "Ideological Politics")
 
 df = pd.DataFrame(data)
 
-df.to_csv('reddit_political_posts_analysis.csv', index=False)
+df.to_csv('csv/reddit/cumulative_reddit_political_posts_analysis.csv', index=False)
+## change for each run
+df.to_csv('csv/reddit/run1.csv', index=False)
 print("Data collection completed. Check csv for info.")
 
 
