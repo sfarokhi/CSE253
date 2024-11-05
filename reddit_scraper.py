@@ -1,6 +1,7 @@
 import praw
 import pandas as pd
 import re # Joey - this is used for fact checking
+from datetime import datetime
 
 # Joey - initializes the API
 reddit = praw.Reddit(
@@ -26,7 +27,7 @@ def detect_fact_checking(post):
     return bool(re.search(fact_check_keywords, post.title + post.selftext, re.IGNORECASE))
 
 
-def scrape_subreddits(subreddits, category):
+def scrape_subreddits(subreddits, category, keywords):
     for sub_name in subreddits:
         try:
             subreddit = reddit.subreddit(sub_name)
@@ -41,11 +42,11 @@ def scrape_subreddits(subreddits, category):
 
                 fact_checking = "Yes" if detect_fact_checking(post) else "No"
                 
-                keyword = "kamala" #Joey - keyword searching
-                if re.search(keyword, post.title + post.selftext, re.IGNORECASE):
+                matched_keyword = next((keyword for keyword in keywords if re.search(keyword, post.title + post.selftext, re.IGNORECASE)), None)
+                if matched_keyword:
                     awards = post.total_awards_received
                     data.append({
-                        'Keyword' : keyword,
+                        'Keyword' : matched_keyword,
                         'Subreddit': sub_name,
                         'Category': category,
                         'Members': num_members,
@@ -63,15 +64,19 @@ def scrape_subreddits(subreddits, category):
             print(f"Error accessing {sub_name}: {e}")
             continue
 
+keywords_list = ["election", "campaign", "win", "Trump", "Kamala", "America", "turnout", "vote", "ballot"]
+
 # Joey - run scrapper!
-scrape_subreddits(political_subreddits, 'General Politics')
-scrape_subreddits(ideological_subreddits, "Ideological Politics")
+scrape_subreddits(political_subreddits, 'General Politics', keywords_list)
+scrape_subreddits(ideological_subreddits, "Ideological Politics", keywords_list)
 
 df = pd.DataFrame(data)
 
-df.to_csv('csv/reddit/cumulative_reddit_political_posts_analysis.csv', index=False)
-## change for each run
-df.to_csv('csv/reddit/run1.csv', index=False)
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+df.to_csv('csv/reddit/cumulative_reddit_political_posts_analysis.csv', mode='a', index=False, header=not pd.io.common.file_exists(f'cumulative_reddit_political_posts_analysis_{timestamp}.csv'))
+df.to_csv(f'csv/reddit/General_Election_Tone_{timestamp}.csv', index=False) ## change for each run
+
 print("Data collection completed. Check csv for info.")
 
 
