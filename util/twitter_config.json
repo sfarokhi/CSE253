@@ -1,0 +1,77 @@
+{
+    "username" : "ucsc.research.group@gmail.com",
+    "password" : "salamander1223!",
+    "test-parameters": [{
+        "test-id": "General-Election-Tone",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "election",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "campaign, win, Trump, Kamala. America, turnout, vote, ballot",
+            "noneOfTheseWords": "Jungkook, Enhypen, Jimin, V, Seventeen, 2024MAMAVOTE",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@KamalaHarris, @realDonaldTrump, @MSNBC, @ABC, @FoxNews, @XNews, @elonmusk",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "User-Predictions",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Rigged-Election",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Immigration",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Puerto Rico",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump",
+            "toTheseAccounts": ""
+        }
+    }{
+        "test-id": "Tariffs",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump",
+            "toTheseAccounts": ""
+        }
+    }]
+}

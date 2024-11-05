@@ -7,9 +7,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
-import sys
 import json
 import time
+import csv
 
 class JSONObject:
     def __init__(self, json_file_path):
@@ -53,8 +53,8 @@ def compile_results(data, filename):
     except Exception as e:
         print(f"Error saving data to JSON: {e}")
 
-if __name__ == '__main__':
-    settings = JSONObject(sys.argv[1])
+def getTwitterData():
+    settings = JSONObject("util/twitter_config.json")
     username = settings['username']
     password = settings['password']
 
@@ -114,7 +114,6 @@ if __name__ == '__main__':
                     tweet_data = {
                         "username": "N/A",
                         "icon-verified": False,
-                        "fact-checked": False,
                         "text": "N/A",
                         "timestamp": "N/A",
                         "replies": 0,
@@ -122,6 +121,7 @@ if __name__ == '__main__':
                         "likes": 0,
                         "bookmarks": 0,
                         "views": 0,
+                        "fact-checked": False,
                     }
 
                     # Extract tweet information
@@ -164,23 +164,7 @@ if __name__ == '__main__':
                     except Exception as e:
                         print("Error")
 
-                    # # Click "Show more" if the button is present to expand the tweet text
-                    # try:
-                    #     show_more_button = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweet-text-show-more-link']")
-                    #     show_more_button.click()
-                    #     tweet_expanded = True
-                    #     time.sleep(5)
-                    # except:
-                    #     print("No extra text")
-
                     tweet_data['text'] = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
-                    
-                    # # If "Show more" was clicked, go back to the main tweet view
-                    # if tweet_expanded:
-                    #     driver.back()
-                    #     tweet_expanded = False
-                    #     time.sleep(5)
-                    
                     # Check for duplicate tweets before adding to the list
                     if tweet_data not in tweets:
                         print("Added tweet")
