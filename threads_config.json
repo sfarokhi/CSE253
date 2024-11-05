@@ -1,13 +1,43 @@
 {
     "credentials": {
-        "username": "research4065",
+        "username": "aggarwalriya48@gmail.com",
         "password": "ucsc@UCSC.23"
     },
     "urls": {
         "https://www.threads.net/search?q=kamla%20harris&serp_type=default": "kamla_harris",
         "https://www.threads.net/search?q=donald%20trump&serp_type=default": "donald_trump",
         "https://www.threads.net/search?q=election&serp_type=default": "election",
-        "https://www.threads.net/search?q=elections&serp_type=default": "election"
+        "https://www.threads.net/search?q=elections&serp_type=default": "election",
+        "https://www.threads.net/search?q=Mail-in&serp_type=default": "mail_in",
+        "https://www.threads.net/search?q=Recount&serp_type=default":"recount",
+        "https://www.threads.net/search?q=Electoral%20College&serp_type=default":"electoral_college",
+        "https://www.threads.net/search?q=Supreme%20Court&serp_type=default": "supreme_court",
+        "https://www.threads.net/search?q=Voter%20ID&serp_type=default" : "voter_id",
+        "https://www.threads.net/search?q=Turnout&serp_type=default" : "Turnout",
+        "https://www.threads.net/search?q=Gerrymandering&serp_type=default" : "Gerrymandering",
+        "https://www.threads.net/search?q=Incumbent&serp_type=default" : "Incumbent",
+        "https://www.threads.net/search?q=Flip&serp_type=default" : "Flip",
+        "https://www.threads.net/search?q=Poll&serp_type=default" : "Poll",
+        "https://www.threads.net/search?q=Campaign&serp_type=default" : "Campaign",
+        "https://www.threads.net/search?q=Registrationn&serp_type=default" : "Registration",
+        "https://www.threads.net/search?q=PACn&serp_type=default" : "PAC",
+        "https://www.threads.net/search?q=Early%20voting&serp_type=default": "Early_Voting",
+        "https://www.threads.net/search?q=election%20day&serp_type=default": "Election_Day",
+        "https://www.threads.net/search?q=Electoral%20Fraud&serp_type=default": "Electoral Fraud",
+        "https://www.threads.net/search?q=Swing%20State&serp_type=default": "Swing_State",
+        "https://www.threads.net/search?q=Campaign%20Finance&serp_type=default": "Campaign_Finance",
+        "https://www.threads.net/@kamalaharris": "kamalaharris_profile",
+        "https://www.threads.net/@vp": "vp_profile",
+        "https://www.threads.net/@thedemocrats" : "thedemocrats_profile",
+        "https://www.threads.net/@timwalz" : "timwalz_profile"
+        
+
+
+
+
+
+        
+
 
     }
 }
