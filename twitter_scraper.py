@@ -8,6 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 import json
+from datetime import datetime
 import time
 import csv
 
@@ -41,21 +42,42 @@ class JSONObject:
     def __str__(self):
         return json.dumps(self.data, indent=4)
 
-def compile_results(data, filename):
+def compile_results(data, testname):
     try:
+        print(data)
+        timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M')
+        filename = f"{testname}-{timestamp}.csv"
+
         # Ensure data is a list of dictionaries (JSON objects)
         if isinstance(data, list) and all(isinstance(item, dict) for item in data):
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=4, ensure_ascii=False)
+            # Gather all unique keys across all dictionaries in data
+            all_keys = set()
+            for item in data:
+                all_keys.update(item.keys())
+            
+            # Open the CSV file for writing
+            with open(filename, mode='w', newline='', encoding='utf-8') as f:
+                # Create a CSV writer object with all unique keys as fieldnames
+                writer = csv.DictWriter(f, fieldnames=all_keys)
+                
+                # Write the header
+                writer.writeheader()
+                
+                # Write the rows
+                writer.writerows(data)
+            
             print(f"Data successfully saved to {filename}")
         else:
             raise ValueError("Input data must be a list of dictionaries (JSON objects).")
     except Exception as e:
-        print(f"Error saving data to JSON: {e}")
+        print(f"Error saving data to CSV: {e}")
+
+
 
 def getTwitterData():
     settings = JSONObject("util/twitter_config.json")
     username = settings['username']
+    email = settings['email']
     password = settings['password']
 
     chrome_options = Options()
@@ -64,19 +86,33 @@ def getTwitterData():
 
     webdriver_service = Service()
     driver = webdriver.Chrome(service=webdriver_service, options=chrome_options)
-    driver.get("https://x.com/i/flow/login")
-
     driver.implicitly_wait(0.5)
     wait = WebDriverWait(driver, 10)
 
-    username_input = wait.until(EC.presence_of_element_located((By.NAME, "text")))
-    username_input.send_keys(username)
-    username_input.send_keys(Keys.RETURN)
+    
+    try:
+        driver.get("https://x.com/i/flow/login")
 
-    password_input = wait.until(EC.presence_of_element_located((By.NAME, "password")))
-    password_input.send_keys(password)
-    password_input.send_keys(Keys.RETURN)
-    time.sleep(2)
+        username_input = wait.until(EC.presence_of_element_located((By.NAME, "text")))
+        username_input.send_keys(username)
+        username_input.send_keys(Keys.RETURN)
+
+        password_input = wait.until(EC.presence_of_element_located((By.NAME, "password")))
+        password_input.send_keys(password)
+        password_input.send_keys(Keys.RETURN)
+        time.sleep(2)
+        
+    except:
+        wait(3)
+        driver.get("https://x.com/i/flow/login")
+
+        email_input = wait.until(EC.presence_of_element_located((By.NAME, "text")))
+        email_input.send_keys(email)
+        email_input.send_keys(Keys.RETURN)
+
+        password_input = wait.until(EC.presence_of_element_located((By.NAME, "password")))
+        password_input.send_keys(password)
+        password_input.send_keys(Keys.RETURN)
 
     for parameters in settings['test-parameters']:
 
@@ -94,23 +130,16 @@ def getTwitterData():
 
         time.sleep(5)
         tweets = []
-        last_height = driver.execute_script("return document.body.scrollHeight")
-        new_height = last_height
         duplicate_tweet_counter = 0
 
-        flag = True
-
         # While extracting tweets
-        while flag and len(tweets) < max_tweets:
-            
-            # Get current tweets on page
-            current_url = driver.current_url
-            tweet_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='tweet']")))
+        while len(tweets) < max_tweets:
+            try:
+                # Get current tweets on page
+                tweet_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='tweet']")))
 
-            # For each tweet
-            for tweet in tweet_elements:
-                try:
-                    tweet_expanded = False  # Track if "Show more" was clicked
+                # For each tweet
+                for tweet in tweet_elements:
                     tweet_data = {
                         "username": "N/A",
                         "icon-verified": False,
@@ -119,88 +148,65 @@ def getTwitterData():
                         "replies": 0,
                         "reposts": 0,
                         "likes": 0,
-                        "bookmarks": 0,
                         "views": 0,
                         "fact-checked": False,
                     }
 
-                    # Extract tweet information
-                    metadata = tweet.find_element(By.XPATH, './/div[@aria-label][@role="group"]').get_attribute('aria-label')
                     try:
+                        metadata = tweet.find_element(By.XPATH, './/div[@aria-label][@role="group"]').get_attribute('aria-label')
                         for value in metadata.split(','):
                             parts = value.strip().split(' ')
                             if len(parts) >= 2:
                                 metadata_number = int(parts[0])
                                 metadata_type = parts[1]
                                 tweet_data[metadata_type] = metadata_number
-                    except Exception as e:
-                        print("Metadata parsing error")
+                    except Exception:
+                        pass
 
                     try:
                         tweet_data['username'] = tweet.find_element(By.XPATH, './/a[contains(@href, "/") and @role="link"]').get_attribute("href").split('/')[-1]
-                    except Exception as e:
-                        print("Username doesn't exist???")
+                    except Exception:
+                        pass
 
                     try:
                         tweet_data['timestamp'] = tweet.find_element(By.XPATH, './/time[@datetime]').get_attribute('datetime')
-                    except Exception as e:
-                        print("No timestamp")
+                    except Exception:
+                        pass
                     
                     try:
                         tweet.find_element(By.CSS_SELECTOR, '[data-testid="icon-verified"]')
-                        print("Verified")
                         tweet_data['icon-verified'] = True
                     except NoSuchElementException:
-                        print("Not verified")
-                    except Exception as e:
-                        print("Error")
+                        pass
 
                     try:
                         tweet.find_element(By.CSS_SELECTOR, '[data-testid="birdwatch-pivot"]')
-                        print("Fact Checked")
                         tweet_data['fact-checked'] = True
                     except NoSuchElementException:
-                        print("Not Fact Checked")
-                    except Exception as e:
-                        print("Error")
+                        pass
 
                     tweet_data['text'] = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
+
                     # Check for duplicate tweets before adding to the list
                     if tweet_data not in tweets:
-                        print("Added tweet")
                         tweets.append(tweet_data)
                         duplicate_tweet_counter = 0
                     else:
-                        print("Duplicate tweet")
                         duplicate_tweet_counter += 1
-
                         if duplicate_tweet_counter > 5:
-                            print("Ran out of Tweets")
-                            compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
-                            flag = False
+                            print("Ran out of unique tweets.")
                             break
-                            
-                    print("-" * 20)
 
-                    if len(tweets) >= max_tweets:
-                        print("Max Tweets Reached")
-                        compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
-                        flag = False
-                        break
+                # Scroll down to load more tweets
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+                time.sleep(3)
 
-                except Exception as e:
-                    print(f"There was an error {e}\n\n")
-                    continue
-
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(3)
-            new_height = driver.execute_script("return document.body.scrollHeight")
-
-            if len(tweets) >= max_tweets:
-                print("Complete.")
-                compile_results(data=tweets, filename=f"results_{parameters['test-id']}.json")
-                flag = False
+            except Exception as e:
+                print(f"Error while fetching tweets: {e}")
                 break
 
-            else:
-                last_height = new_height
+        # Compile results after exiting the while loop
+        if tweets:
+            compile_results(data=tweets, testname=parameters['test-id'])
+        else:
+            print("No tweets found for this test parameter set.")
