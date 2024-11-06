@@ -1,43 +1,120 @@
 {
     "credentials": {
-        "username": "aggarwalriya48@gmail.com",
+        "username": "research4065",
         "password": "ucsc@UCSC.23"
     },
-    "urls": {
-        "https://www.threads.net/search?q=kamla%20harris&serp_type=default": "kamla_harris",
-        "https://www.threads.net/search?q=donald%20trump&serp_type=default": "donald_trump",
-        "https://www.threads.net/search?q=election&serp_type=default": "election",
-        "https://www.threads.net/search?q=elections&serp_type=default": "election",
-        "https://www.threads.net/search?q=Mail-in&serp_type=default": "mail_in",
-        "https://www.threads.net/search?q=Recount&serp_type=default":"recount",
-        "https://www.threads.net/search?q=Electoral%20College&serp_type=default":"electoral_college",
-        "https://www.threads.net/search?q=Supreme%20Court&serp_type=default": "supreme_court",
-        "https://www.threads.net/search?q=Voter%20ID&serp_type=default" : "voter_id",
-        "https://www.threads.net/search?q=Turnout&serp_type=default" : "Turnout",
-        "https://www.threads.net/search?q=Gerrymandering&serp_type=default" : "Gerrymandering",
-        "https://www.threads.net/search?q=Incumbent&serp_type=default" : "Incumbent",
-        "https://www.threads.net/search?q=Flip&serp_type=default" : "Flip",
-        "https://www.threads.net/search?q=Poll&serp_type=default" : "Poll",
-        "https://www.threads.net/search?q=Campaign&serp_type=default" : "Campaign",
-        "https://www.threads.net/search?q=Registrationn&serp_type=default" : "Registration",
-        "https://www.threads.net/search?q=PACn&serp_type=default" : "PAC",
-        "https://www.threads.net/search?q=Early%20voting&serp_type=default": "Early_Voting",
-        "https://www.threads.net/search?q=election%20day&serp_type=default": "Election_Day",
-        "https://www.threads.net/search?q=Electoral%20Fraud&serp_type=default": "Electoral Fraud",
-        "https://www.threads.net/search?q=Swing%20State&serp_type=default": "Swing_State",
-        "https://www.threads.net/search?q=Campaign%20Finance&serp_type=default": "Campaign_Finance",
-        "https://www.threads.net/@kamalaharris": "kamalaharris_profile",
-        "https://www.threads.net/@vp": "vp_profile",
-        "https://www.threads.net/@thedemocrats" : "thedemocrats_profile",
-        "https://www.threads.net/@timwalz" : "timwalz_profile"
-        
-
-
-
-
-
-        
-
-
+    "test_cases": {
+        "General-Election-Tone-Profiles": {
+            "urls": [
+                "https://www.threads.net/@vp",
+                "https://www.threads.net/@kamalaharris",
+                "https://www.threads.net/@teamtrump",
+                "https://www.threads.net/@timwalz",
+                "https://www.threads.net/@msnbc",
+                "https://www.threads.net/@abcnews",
+                "https://www.threads.net/@FoxNews",
+                "https://www.threads.net/@real.elon.musk.official"
+            ],
+            "keywords": ["election", "win", "Trump", "Kamala", "America", "turnout", "vote", "ballot"],
+            "csv_filename": "General-Election-Tone-Profiles.csv"
+        },
+        "General-Election-Tone": {
+            "urls": [
+                "https://www.threads.net/search?q=election%2C%20win%2C%20Trump%2C%20Kamala%2C%20America%2C%20turnout%2C%20vote%2C%20ballot&serp_type=default"
+            ],
+            "csv_filename": "General-Election-Tone.csv"
+        },
+        "User-Predictions-Profiles": {
+            "urls": [
+                "https://www.threads.net/@vp",
+                "https://www.threads.net/@kamalaharris",
+                "https://www.threads.net/@teamtrump",
+                "https://www.threads.net/@msnbc",
+                "https://www.threads.net/@abcnews",
+                "https://www.threads.net/@FoxNews",
+                "https://www.threads.net/@real.elon.musk.official"
+            ],
+            "keywords": ["prediction", "swing", "poll", "Arizona", "Georgia", "Michigan", "Nevada", "North", "Carolina", "Pennsylvania", "Wisconsin", "California"],
+            "csv_filename": "User-Predictions-Profiles.csv"
+        },
+        "User-Predictions": {
+            "urls": [
+                "https://www.threads.net/search?q=prediction%2C%20swing%2C%20poll%2C%20Arizona%2C%20Georgia%2C%20Michigan%2C%20Nevada%2C%20North%2C%20Carolina%2C%20Pennsylvania%2C%20Wisconsin%2C%20California&serp_type=default"
+            ],
+            "csv_filename": "User-Predictions.csv"
+        },
+        "Rigged-Election-Profiles": {
+            "urls": [
+                "https://www.threads.net/@thedemocrats",
+                "https://www.threads.net/@teamtrump",
+                "https://www.threads.net/@real.elon.musk.official"
+            ],
+            "keywords": ["fraud", "rig", "interfere", "cheat", "recount", "riot", "MAGA", "2016", "mail", "thrown away"],
+            "csv_filename": "Rigged-Election-Profiles.csv"
+        },
+        "Rigged-Election": {
+            "urls": [
+                "https://www.threads.net/search?q=fraud%2C%20rig%2C%20interfere%2C%20cheat%2C%20recount%2C%20riot%2C%20MAGA%2C%202016%2C%20mail%2C%20thrown%20away&serp_type=default"
+            ],
+            "csv_filename": "Rigged-Election.csv"
+        },
+        "Immigration-Profiles": {
+            "urls": [
+                "https://www.threads.net/@vp",
+                "https://www.threads.net/@kamalaharris",
+                "https://www.threads.net/@timwalz",
+                "https://www.threads.net/@real.elon.musk.official",
+                "https://www.threads.net/@teamtrump"
+            ],
+            "keywords": ["Springfield", "Ohio", "dogs", "cats", "Haitian", "eat", "debunk", "rumor", "immigrant", "deport", "confirm", "asylum", "border", "illegal", "citizenship", "mexican", "mexico", "texas", "ICE", "patrol", "wall"],
+            "csv_filename": "Immigration-Profiles.csv"
+        },
+        "Immigration": {
+            "urls": [
+                "https://www.threads.net/search?q=Springfield%2C%20Ohio%2C%20dogs%2C%20cats%2C%20Haitian%2C%20eat%2C%20debunk%2C%20rumor%2C%20immigrant%2C%20deport%2C%20confirm%2C%20asylum%2C%20border%2C%20illegal%2C%20citizenship%2C%20mexican%2C%20mexico%2C%20texas%2C%20ICE%2C%20patrol%2C%20wall&serp_type=default"
+            ],
+            "csv_filename": "Immigration.csv"
+        },
+        "Identity-Politics-Profiles": {
+            "urls": [
+                "https://www.threads.net/@vp",
+                "https://www.threads.net/@kamalaharris",
+                "https://www.threads.net/@timwalz",
+                "https://www.threads.net/@tonyhinchcliffe",
+                "https://www.threads.net/@thedemocrats"
+            ],
+            "keywords": ["Puerto Rico", "Bad Bunny", "island of trash", "comedian", "joke", "Madison Square Garden", "Trump", "rally", "black", "white", "BLM", "All lives Matter", "Black Lives Matter"],
+            "csv_filename": "Identity-Politics-Profiles.csv"
+        },
+        "Identity-Politics": {
+            "urls": [
+                "https://www.threads.net/search?q=Puerto%20Rico%2C%20Bad%20Bunny%2C%20island%20of%20trash%2C%20comedian%2C%20joke%2C%20Madison%20Square%20Garden%2C%20Trump%2C%20rally%2C%20black%2C%20white%2C%20BLM%2C%20All%20lives%20Matter%2C%20Black%20Lives%20Matter&serp_type=default"
+            ],
+            "csv_filename": "Identity-Politics.csv"
+        },
+        "Economy-and-Environment-Profiles": {
+            "urls": [
+                "https://www.threads.net/@vp",
+                "https://www.threads.net/@kamalaharris",
+                "https://www.threads.net/@timwalz",
+                "https://www.threads.net/@thedemocrats",
+                "https://www.threads.net/@teamtrump",
+                "https://www.threads.net/@nbcnews"
+            ],
+            "keywords": ["tariff", "economy", "economic", "tax", "percent", "inflation", "groceries", "plan", "deficit", "China", "carbon", "co2", "global warming", "hurricane", "wildfire", "temperature", "hotter", "gasoline", "oil", "fossil fuels", "energy"],
+            "csv_filename": "Economy-and-Environment-Profiles.csv"
+        },
+        "Economy-and-Environment": {
+            "urls": [
+                "https://www.threads.net/search?q=tariff%2C%20economy%2C%20economic%2C%20tax%2C%20percent%2C%20inflation%2C%20groceries%2C%20plan%2C%20deficit%2C%20China%2C%20carbon%2C%20co2%2C%20global%20warming%2C%20hurricane%2C%20wildfire%2C%20temperature%2C%20hotter%2C%20gasoline%2C%20oil%2C%20fossil%20fuels%2C%20energy&serp_type=default"
+            ],
+            "csv_filename": "Economy-and-Environment.csv"
+        },
+        "January-6th": {
+            "urls": [
+                "https://www.threads.net/search?q=January%206th%2C%20capitol%2C%20riot%2C%20MAGA%2C%20violent%2C%20threat&serp_type=default"
+            ],
+            "csv_filename": "January-6th.csv"
+        }
     }
 }
