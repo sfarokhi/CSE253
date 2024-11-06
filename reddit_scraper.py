@@ -2,6 +2,8 @@ import praw
 import pandas as pd
 import re # Joey - this is used for fact checking
 from datetime import datetime
+import schedule 
+import time 
 
 # Joey - initializes the API
 reddit = praw.Reddit(
@@ -64,19 +66,38 @@ def scrape_subreddits(subreddits, category, keywords):
             print(f"Error accessing {sub_name}: {e}")
             continue
 
-keywords_list = ["election", "campaign", "win", "Trump", "Kamala", "America", "turnout", "vote", "ballot"]
+def run_tests():
+    global data
+    tests ={
+        "General_Election_Tone": ["election", "campaign", "win", "Trump", "Kamala", "America", "turnout", "vote", "ballot"],
+        "User_Predictions": ["prediction", "swing", "poll", "Arizona", "Georgia", "Michigan", "Nevada", "North", "Carolina", "Pennsylvania", "Wisconsin", "California"],
+        "Rigged_Election": ["fraud", "rig", "interfere", "cheat", "recount", "riot", "MAGA", "2016", "mail", "thrown away"],
+        "Immigration": ["Springfield", "Ohio", "dogs", "cats", "Haitian", "eat", "debunk", "rumor", "immigrant", "deport", "confirm", "asylum", "border", "illegal", "citizenship", "mexican", "mexico", "texas", "ICE", "patrol", "wall"],
+        "Identity_Politics": ["Puerto Rico", "Bad Bunny", "island of trash", "comedian", "joke", "Madison Square Garden", "Trump", "rally", "black", "white", "BLM", "All lives Matter", "Black Lives Matter", "transgender", "lgbt", "police", "palestine", "israel", "israeli", "palestinian", "gaza", "muslim", "christian", "God", "cop", "police", "blue lives matter", "justice", "abortion", "women's rights", "roe", "wade"],
+        "Economy_and_Environment": ["tariff", "economy", "economic", "tax", "percent", "inflation", "groceries", "plan", "deficit", "China", "carbon", "co2", "global warming", "hurricane", "wildfire", "temperature", "hotter", "gasoline", "oil", "fossil fuels", "energy"]
+    }
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
-# Joey - run scrapper!
-scrape_subreddits(political_subreddits, 'General Politics', keywords_list)
-scrape_subreddits(ideological_subreddits, "Ideological Politics", keywords_list)
+    for test_name, keywords in tests.items():
+        data = []
+        scrape_subreddits(political_subreddits, 'General Politics', keywords)
+        scrape_subreddits(ideological_subreddits, "Ideological Politics", keywords)
 
-df = pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        df.to_csv(f'{test_name}_{timestamp}.csv', index=False)
+        df.to_csv('cumulative_reddit_political_posts_analysis.csv', mode='a', index=False, header=not pd.io.common.file_exists(f'cumulative_reddit_political_posts_analysis_{timestamp}.csv'))
+    
+    print("Data collection completed. Check csv for info.")
 
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+#scheduling
 
-df.to_csv('csv/reddit/cumulative_reddit_political_posts_analysis.csv', mode='a', index=False, header=not pd.io.common.file_exists(f'cumulative_reddit_political_posts_analysis_{timestamp}.csv'))
-df.to_csv(f'csv/reddit/General_Election_Tone_{timestamp}.csv', index=False) ## change for each run
+schedule.every(1).hours.do(run_tests)
+end_time = time.time() + 30 * 24 * 60 * 60 #runs for 30 days, every hour
 
-print("Data collection completed. Check csv for info.")
+while time.time() < end_time:
+    schedule.run_pending()
+    time.sleep(1)
 
+
+    
 
