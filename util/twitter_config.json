@@ -4,7 +4,19 @@
     "password" : "salamander1223!",
     "test-parameters": [{
         "test-id": "General-Election-Tone",
-        "max-tweets": 5,
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "election",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "campaign, win, Trump, Kamala. America, turnout, vote, ballot",
+            "noneOfTheseWords": "Jungkook, Enhypen, Jimin, V, Seventeen, 2024MAMAVOTE",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "General-Election-Tone-Profiles",
+        "max-tweets": 50,
         "advanced-search": {
             "allOfTheseWords": "election",
             "thisExactPhrase": "",
@@ -14,5 +26,138 @@
             "fromTheseAccounts": "@KamalaHarris, @realDonaldTrump, @MSNBC, @ABC, @FoxNews, @XNews, @elonmusk",
             "toTheseAccounts": ""
         }
-}]}
+    },{
+        "test-id": "User-Predictions",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "predict",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "prediction, swing, poll, Arizona, Georgia, Michigan, Nevada, North, Carolina, Pennsylvania, Wisconsin, California",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "User-Predictions-Profiles",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "predict",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "prediction, swing, poll, Arizona, Georgia, Michigan, Nevada, North, Carolina, Pennsylvania, Wisconsin, California",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@KamalaHarris, @realDonaldTrump, @MSNBC, @ABC, @FoxNews, @XNews, @elonmusk",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Rigged-Election",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "fraud, rig, interfere, cheat, recount, riot, MAGA, 2016, mail, thrown away",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Rigged-Election-Profiles",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "fraud, rig, interfere, cheat, recount, riot, MAGA, 2016, mail, thrown away",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@realDonaldTrump, @TheDemocrats, @JDVance, @TrumpWarRoom, @elonmusk",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Immigration",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "Springfield, Ohio, dogs, cats, Haitian, eat, debunk, rumor, immigrant, deport, confirm, asylum, border, illegal, citizenship, mexican, mexico, texas, ICE, patrol, wall",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Immigration-Profiles",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "Springfield, Ohio, dogs, cats, Haitian, eat, debunk, rumor, immigrant, deport, confirm, asylum, border, illegal, citizenship, mexican, mexico, texas, ICE, patrol, wall",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@KamalaHarris, @VP, @realDonaldTrump, @TheDemocrats, @Tim_Walz, @JDVance",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Identity-Politics",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "Puerto Rico, Bad Bunny, island of trash, comedian, joke, Madison Square Garden, Trump, rally, black, white, BLM, All lives Matter, Black Lives Matter",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Identity-Politics-Profiles",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "Puerto Rico, Bad Bunny, island of trash, comedian, joke, Madison Square Garden, Trump, rally, black, white, BLM, All lives Matter, Black Lives Matter",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@TonyHinchcliffe, @JDVance, @KamalaHarris, @Tim_Walz, @TheDemocrats",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Economy-and-Enviorment",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": " tariff, economy, economic, tax, percent, inflation, groceries, plan, deficit, China, carbon, co2, global warming, hurricane, wildfire, temperature, hotter, gasoline, oil, fossil fuels, energy",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "Economy-and-Enviorment-Profiles",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "tariff, economy, economic, tax, percent, inflation, groceries, plan, deficit, China, carbon, co2, global warming, hurricane, wildfire, temperature, hotter, gasoline, oil, fossil fuels, energy",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@KamalaHarris, @VP, @realDonaldTrump, @TheDemocrats, @Tim_Walz, @JDVance, @NBCNews",
+            "toTheseAccounts": ""
+        }
+    },{
+        "test-id": "January-6th",
+        "max-tweets": 50,
+        "advanced-search": {
+            "allOfTheseWords": "",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "January 6th, capitol, riot, MAGA, violent, threat, felon, criminal, radical",
+            "noneOfTheseWords": "",
+            "theseHashtags": "",
+            "fromTheseAccounts": "",
+            "toTheseAccounts": ""
+        }
+    }
+]}
  
