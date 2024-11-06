@@ -11,6 +11,7 @@ import json
 from datetime import datetime
 import time
 import csv
+import random
 
 class JSONObject:
     def __init__(self, json_file_path):
@@ -44,9 +45,8 @@ class JSONObject:
 
 def compile_results(data, testname):
     try:
-        print(data)
-        timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M')
-        filename = f"{testname}-{timestamp}.csv"
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'twitter_results/{testname}_{timestamp}.csv'
 
         # Ensure data is a list of dictionaries (JSON objects)
         if isinstance(data, list) and all(isinstance(item, dict) for item in data):
@@ -116,6 +116,7 @@ def getTwitterData():
 
     for parameters in settings['test-parameters']:
 
+        time.sleep(random.randint(10, 15))
         max_tweets = parameters['max-tweets']
         driver.get("https://x.com/search-advanced?vertical=trends")
         try:

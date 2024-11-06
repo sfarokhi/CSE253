@@ -66,7 +66,7 @@ def scrape_subreddits(subreddits, category, keywords):
             print(f"Error accessing {sub_name}: {e}")
             continue
 
-def run_tests():
+def getRedditData():
     global data
     tests ={
         "General_Election_Tone": ["election", "campaign", "win", "Trump", "Kamala", "America", "turnout", "vote", "ballot"],
@@ -84,19 +84,19 @@ def run_tests():
         scrape_subreddits(ideological_subreddits, "Ideological Politics", keywords)
 
         df = pd.DataFrame(data)
-        df.to_csv(f'{test_name}_{timestamp}.csv', index=False)
-        df.to_csv('cumulative_reddit_political_posts_analysis.csv', mode='a', index=False, header=not pd.io.common.file_exists(f'cumulative_reddit_political_posts_analysis_{timestamp}.csv'))
+        df.to_csv(f'reddit_results/{test_name}_{timestamp}.csv', index=False)
+        df.to_csv('reddit_results/cumulative_reddit_political_posts_analysis.csv', mode='a', index=False, header=not pd.io.common.file_exists(f'reddit_results/cumulative_reddit_political_posts_analysis_{timestamp}.csv'))
     
     print("Data collection completed. Check csv for info.")
 
 #scheduling
 
-schedule.every(1).hours.do(run_tests)
-end_time = time.time() + 30 * 24 * 60 * 60 #runs for 30 days, every hour
+# schedule.every(1).hours.do(run_tests)
+# end_time = time.time() + 30 * 24 * 60 * 60 #runs for 30 days, every hour
 
-while time.time() < end_time:
-    schedule.run_pending()
-    time.sleep(1)
+# while time.time() < end_time:
+#     schedule.run_pending()
+#     time.sleep(1)
 
 
     
