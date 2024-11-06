@@ -1,0 +1,18 @@
+{
+    "username" : "samslug1223",
+    "email" : "ucsc.research.group@gmail.com",
+    "password" : "salamander1223!",
+    "test-parameters": [{
+        "test-id": "General-Election-Tone",
+        "max-tweets": 5,
+        "advanced-search": {
+            "allOfTheseWords": "election",
+            "thisExactPhrase": "",
+            "anyOfTheseWords": "campaign, win, Trump, Kamala. America, turnout, vote, ballot",
+            "noneOfTheseWords": "Jungkook, Enhypen, Jimin, V, Seventeen, 2024MAMAVOTE",
+            "theseHashtags": "",
+            "fromTheseAccounts": "@KamalaHarris, @realDonaldTrump, @MSNBC, @ABC, @FoxNews, @XNews, @elonmusk",
+            "toTheseAccounts": ""
+        }
+}]}
+ 
