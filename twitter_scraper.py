@@ -12,6 +12,7 @@ from datetime import datetime
 import time
 import csv
 import random
+import os
 
 class JSONObject:
     def __init__(self, json_file_path):
@@ -45,20 +46,19 @@ class JSONObject:
 
 def compile_results(data, testname):
     try:
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f'twitter_results/{testname}_{timestamp}.csv'
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        os.makedirs(f'twitter_results/{testname}', exist_ok=True)
+        filename = f'twitter_results/{testname}/{timestamp}.csv'
 
         # Ensure data is a list of dictionaries (JSON objects)
         if isinstance(data, list) and all(isinstance(item, dict) for item in data):
             # Gather all unique keys across all dictionaries in data
-            all_keys = set()
-            for item in data:
-                all_keys.update(item.keys())
+            fieldnames = ['timestamp','username','icon-verified','fact-checked','text','views', 'likes','replies','reposts','bookmarks']
             
             # Open the CSV file for writing
             with open(filename, mode='w', newline='', encoding='utf-8') as f:
                 # Create a CSV writer object with all unique keys as fieldnames
-                writer = csv.DictWriter(f, fieldnames=all_keys)
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
                 
                 # Write the header
                 writer.writeheader()
@@ -72,8 +72,6 @@ def compile_results(data, testname):
     except Exception as e:
         print(f"Error saving data to CSV: {e}")
 
-
-
 def getTwitterData():
     settings = JSONObject("util/twitter_config.json")
     username = settings['username']
@@ -82,6 +80,7 @@ def getTwitterData():
 
     chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     webdriver_service = Service()
@@ -103,7 +102,7 @@ def getTwitterData():
         time.sleep(2)
         
     except:
-        wait(3)
+        time.sleep(3)
         driver.get("https://x.com/i/flow/login")
 
         email_input = wait.until(EC.presence_of_element_located((By.NAME, "text")))
@@ -123,18 +122,18 @@ def getTwitterData():
             for option, value in parameters['advanced-search'].items():
                 if value:
                     foo = wait.until(EC.presence_of_element_located((By.NAME, option)))
-                    foo.send_keys(value)
+                    foo.send_keys(value.replace(',', ''))
             foo.send_keys(Keys.RETURN)
 
         except Exception as e:
             print(f"Error: {e}")
 
-        time.sleep(5)
         tweets = []
         duplicate_tweet_counter = 0
+        bail = False
 
         # While extracting tweets
-        while len(tweets) < max_tweets:
+        while len(tweets) < max_tweets and not bail:
             try:
                 # Get current tweets on page
                 tweet_elements = wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "[data-testid='tweet']")))
@@ -150,19 +149,21 @@ def getTwitterData():
                         "reposts": 0,
                         "likes": 0,
                         "views": 0,
+                        "bookmarks": 0,
                         "fact-checked": False,
                     }
 
-                    try:
-                        metadata = tweet.find_element(By.XPATH, './/div[@aria-label][@role="group"]').get_attribute('aria-label')
-                        for value in metadata.split(','):
+                    metadata = tweet.find_element(By.XPATH, './/div[@aria-label][@role="group"]').get_attribute('aria-label')
+                    metadata_columns = ['replies', 'reposts', 'likes', 'bookmarks', 'views']
+                    for key, value in enumerate(metadata.split(',')):
+                        try:
                             parts = value.strip().split(' ')
                             if len(parts) >= 2:
                                 metadata_number = int(parts[0])
-                                metadata_type = parts[1]
-                                tweet_data[metadata_type] = metadata_number
-                    except Exception:
-                        pass
+                                tweet_data[metadata_columns[key]] = metadata_number
+
+                        except Exception:
+                            pass
 
                     try:
                         tweet_data['username'] = tweet.find_element(By.XPATH, './/a[contains(@href, "/") and @role="link"]').get_attribute("href").split('/')[-1]
@@ -186,7 +187,10 @@ def getTwitterData():
                     except NoSuchElementException:
                         pass
 
-                    tweet_data['text'] = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
+                    try:
+                        tweet_data['text'] = tweet.find_element(By.CSS_SELECTOR, "[data-testid='tweetText']").text
+                    except NoSuchElementException:
+                        pass
 
                     # Check for duplicate tweets before adding to the list
                     if tweet_data not in tweets:
@@ -194,9 +198,12 @@ def getTwitterData():
                         duplicate_tweet_counter = 0
                     else:
                         duplicate_tweet_counter += 1
-                        if duplicate_tweet_counter > 5:
-                            print("Ran out of unique tweets.")
-                            break
+                        
+                    if duplicate_tweet_counter > 5:
+                        print("Ran out of unique tweets.")
+                        compile_results(data=tweets, testname=parameters['test-id'])
+                        bail = True
+                        break
 
                 # Scroll down to load more tweets
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -211,3 +218,7 @@ def getTwitterData():
             compile_results(data=tweets, testname=parameters['test-id'])
         else:
             print("No tweets found for this test parameter set.")
+            time.sleep(3)
+
+if __name__=='__main__':
+    getTwitterData()

@@ -76,7 +76,7 @@ def getRedditData():
         "Identity_Politics": ["Puerto Rico", "Bad Bunny", "island of trash", "comedian", "joke", "Madison Square Garden", "Trump", "rally", "black", "white", "BLM", "All lives Matter", "Black Lives Matter", "transgender", "lgbt", "police", "palestine", "israel", "israeli", "palestinian", "gaza", "muslim", "christian", "God", "cop", "police", "blue lives matter", "justice", "abortion", "women's rights", "roe", "wade"],
         "Economy_and_Environment": ["tariff", "economy", "economic", "tax", "percent", "inflation", "groceries", "plan", "deficit", "China", "carbon", "co2", "global warming", "hurricane", "wildfire", "temperature", "hotter", "gasoline", "oil", "fossil fuels", "energy"]
     }
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
     for test_name, keywords in tests.items():
         data = []
