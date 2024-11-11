@@ -1,2 +1,6 @@
-
+reddit_results/
+twitter_results/
 *.pyc
+threads_scraper.py
+threads_config.json
+threads_scraper.py

@@ -53,7 +53,7 @@ def compile_results(data, testname):
         # Ensure data is a list of dictionaries (JSON objects)
         if isinstance(data, list) and all(isinstance(item, dict) for item in data):
             # Gather all unique keys across all dictionaries in data
-            fieldnames = ['timestamp','username','icon-verified','fact-checked','text','views', 'likes','replies','reposts','bookmarks']
+            fieldnames = ['timestamp','username','icon-verified','fact-checked','text','views','likes','replies','reposts','bookmarks']
             
             # Open the CSV file for writing
             with open(filename, mode='w', newline='', encoding='utf-8') as f:
@@ -80,7 +80,7 @@ def getTwitterData():
 
     chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     webdriver_service = Service()
@@ -195,6 +195,7 @@ def getTwitterData():
                     # Check for duplicate tweets before adding to the list
                     if tweet_data not in tweets:
                         tweets.append(tweet_data)
+                        print("Added Tweet")
                         duplicate_tweet_counter = 0
                     else:
                         duplicate_tweet_counter += 1
@@ -220,5 +221,5 @@ def getTwitterData():
             print("No tweets found for this test parameter set.")
             time.sleep(3)
 
-if __name__=='__main__':
-    getTwitterData()
+# if __name__=='__main__':
+#     getTwitterData()
