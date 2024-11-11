@@ -74,7 +74,7 @@ def getRedditData():
         "International Affairs": ["gaza", "ukraine", "Zelenskyy", "putin", "north korea", "Kim Jong Un", "israel", "palestinian", "War", "Iran", "world war", "russia", "british", "uk", "europe", "china"],
         "Immigration": ["immigration", "policy change", "foreign relations", "treaties", "border", "asylum", "citizenship reform", "illegal", "haitian", "mexican", "south america", "border patrol", "mexico", "texas"],
         "Economic Projections and Environmental Policy": ["economic outlook", "inflation", "market response", "environmental plans", "clean energy", "sustainability", "economy", "gas", "prices", "tariffs", "money", "treasury", "hurricane", "wildfires", "global warming", "climate change", "plastic", "coal"],
-        "Technology and Health": ["elon musk", "ai", "artificial intelligence", "cyber security", "RFK", "vaccine", "diseases", "Covid", "social media"]]
+        "Technology and Health": ["elon musk", "ai", "artificial intelligence", "cyber security", "RFK", "vaccine", "diseases", "Covid", "social media"]
     }
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
