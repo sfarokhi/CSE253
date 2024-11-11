@@ -69,12 +69,12 @@ def scrape_subreddits(subreddits, category, keywords):
 def getRedditData():
     global data
     tests ={
-        "General_Election_Tone": ["election", "campaign", "win", "Trump", "Kamala", "America", "turnout", "vote", "ballot"],
-        "User_Predictions": ["prediction", "swing", "poll", "Arizona", "Georgia", "Michigan", "Nevada", "North", "Carolina", "Pennsylvania", "Wisconsin", "California"],
-        "Rigged_Election": ["fraud", "rig", "interfere", "cheat", "recount", "riot", "MAGA", "2016", "mail", "thrown away"],
-        "Immigration": ["Springfield", "Ohio", "dogs", "cats", "Haitian", "eat", "debunk", "rumor", "immigrant", "deport", "confirm", "asylum", "border", "illegal", "citizenship", "mexican", "mexico", "texas", "ICE", "patrol", "wall"],
-        "Identity_Politics": ["Puerto Rico", "Bad Bunny", "island of trash", "comedian", "joke", "Madison Square Garden", "Trump", "rally", "black", "white", "BLM", "All lives Matter", "Black Lives Matter", "transgender", "lgbt", "police", "palestine", "israel", "israeli", "palestinian", "gaza", "muslim", "christian", "God", "cop", "police", "blue lives matter", "justice", "abortion", "women's rights", "roe", "wade"],
-        "Economy_and_Environment": ["tariff", "economy", "economic", "tax", "percent", "inflation", "groceries", "plan", "deficit", "China", "carbon", "co2", "global warming", "hurricane", "wildfire", "temperature", "hotter", "gasoline", "oil", "fossil fuels", "energy"]
+        "Post-Election Analysis & Results": ["results", "victory", "loss", "outcome", "recount", "certify", "electoral", "fraud", "election results", "biden", "harris", "trump", "vance", "president", "presidency", "house", "senate", "bernie", "supreme court"],
+        "Voting Demographics": ["vote", "white", "black", "latino", "male", "female", "michigan", "urban", "rural", "suburban", "election map", "survey", "poll", "North Carolina", "Wisconsin", "Michigan", "Nevada", "Arizona", "Texas"],
+        "International Affairs": ["gaza", "ukraine", "Zelenskyy", "putin", "north korea", "Kim Jong Un", "israel", "palestinian", "War", "Iran", "world war", "russia", "british", "uk", "europe", "china"],
+        "Immigration": ["immigration", "policy change", "foreign relations", "treaties", "border", "asylum", "citizenship reform", "illegal", "haitian", "mexican", "south america", "border patrol", "mexico", "texas"],
+        "Economic Projections and Environmental Policy": ["economic outlook", "inflation", "market response", "environmental plans", "clean energy", "sustainability", "economy", "gas", "prices", "tariffs", "money", "treasury", "hurricane", "wildfires", "global warming", "climate change", "plastic", "coal"],
+        "Technology and Health": ["elon musk", "ai", "artificial intelligence", "cyber security", "RFK", "vaccine", "diseases", "Covid", "social media"]
     }
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
