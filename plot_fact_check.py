@@ -2,7 +2,9 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#Joey fact checking on political posts. only using cumulative file as of now
+#Joey this file simply checks the fact check behing popular posts in general and ideological subreddits
+# Useful if you have a file without a bias column, aka u forgot to run the file through the semi_supervised_learning file
+#  Use bias plot script
 
 # Load and clean data
 def load_clean_data(file_path):
