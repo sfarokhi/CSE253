@@ -14,14 +14,14 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 # Load the cumulative dataset
-file_path = 'reddit_data/cumulative_reddit_political_posts_analysis.csv'
+file_path = 'w2_reddit_data/cumulative_reddit_political_posts_analysis.csv'
 df_cumulative = pd.read_csv(file_path)
 
 # Remove duplicate posts based on the Title column
 df_cumulative = df_cumulative.drop_duplicates(subset='Title', keep='first')
 
 # Load the small sample Excel file
-sample_file_path = 'reddit_data/small_sample.xlsx'
+sample_file_path = 'small_sample.xlsx'
 df_sample = pd.read_excel(sample_file_path)
 
 # Basic text preprocessing
@@ -50,11 +50,11 @@ X_cumulative = tfidf_vectorizer.transform(df_cumulative['processed_text'])
 y_sample = df_sample['Bias']
 
 # Apply SMOTE to handle class imbalance
-smote = SMOTE(random_state=42)
-X_sample_res, y_sample_res = smote.fit_resample(X_sample, y_sample)
+#smote = SMOTE(random_state=42)
+#X_sample_res, y_sample_res = smote.fit_resample(X_sample, y_sample)
 
 # Split the sample dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X_sample_res, y_sample_res, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_sample, y_sample, test_size=0.2, random_state=42)
 
 # Train a Random Forest classifier for better performance
 classifier = RandomForestClassifier(random_state=42)
@@ -69,6 +69,7 @@ print("Accuracy Score:", accuracy_score(y_test, y_pred))
 y_cumulative_pred = classifier.predict(X_cumulative)
 df_cumulative['Bias'] = y_cumulative_pred
 
+'''
 # Self-training loop (adding high-confidence predictions back to training data)
 confidence_threshold = 0.9
 iteration = 0
@@ -93,12 +94,12 @@ while iteration < max_iterations:
     # Retrain the classifier
     classifier.fit(X_train, y_train)
     iteration += 1
-
+'''
 # Final prediction on the cumulative dataset after self-training
 df_cumulative['Bias'] = classifier.predict(X_cumulative)
 
 # Save the updated cumulative dataset with the new Bias column
-output_file_path = 'reddit_data/cumulative_reddit_political_posts_analysis_with_bias.csv'
+output_file_path = 'w2_reddit_data/cumulative_reddit_political_posts_analysis_with_bias.csv'
 df_cumulative.to_csv(output_file_path, index=False)
 
 # Plot the distribution of posts by Bias

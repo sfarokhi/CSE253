@@ -92,15 +92,15 @@ def plot_posts_by_bias(df, popular_posts_df, filter):
 
     
     plt.tight_layout()
-    os.makedirs('fact_check_graphs', exist_ok=True)
+    #os.makedirs('fact_check_graphs', exist_ok=True)
     if filter == True:
-        plt.savefig('fact_check_graphs/w1_ideological_bias_fact_check_analysis_bias.png')
+        plt.savefig('fact_check_graphs/w2_fact_check_graphs/w2_ideological_bias_fact_check_analysis_bias.png')
     else:
-        plt.savefig('fact_check_graphs/w1_general_bias_fact_check_analysis_bias.png')
+        plt.savefig('fact_check_graphs/w2_fact_check_graphs/w2_general_bias_fact_check_analysis_bias.png')
 
 # Main script to execute
 def main():
-    file_path = 'reddit_data/cumulative_reddit_political_posts_analysis_with_bias.csv'
+    file_path = 'w2_reddit_data/cumulative_reddit_political_posts_analysis_with_bias.csv'
     df = load_clean_data(file_path)
     filter = True
     while filter == True:
